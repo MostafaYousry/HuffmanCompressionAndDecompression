@@ -36,16 +36,15 @@ public class HuffmanDecodedTree {
 		String binaryCompressedString = convertStringToBinary(compressedLine);
 		HuffmanNode nodePointer = root;
 		for (int i = 0; i < binaryCompressedString.length(); i++) {
-			if(binaryCompressedString.charAt(i) == '0'){
+			if (binaryCompressedString.charAt(i) == '0') {
 				nodePointer = nodePointer.getLeft();
-				if(nodePointer.getLeft() == null && nodePointer.getRight() == null){
+				if (nodePointer.getLeft() == null && nodePointer.getRight() == null) {
 					System.out.println(nodePointer.getCharacter());
 					nodePointer = root;
 				}
-			}
-			else if(binaryCompressedString.charAt(i) == '1'){
+			} else if (binaryCompressedString.charAt(i) == '1') {
 				nodePointer = nodePointer.getRight();
-				if(nodePointer.getLeft() == null && nodePointer.getRight() == null){
+				if (nodePointer.getLeft() == null && nodePointer.getRight() == null) {
 					System.out.println(nodePointer.getCharacter());
 					nodePointer = root;
 				}
@@ -56,13 +55,15 @@ public class HuffmanDecodedTree {
 
 	private String convertStringToBinary(String compressedLine) {
 		String binaryCompressedString = "";
-		for(int i = 0; i < compressedLine.length() - 1; i++){
+		int compressedLineLength = compressedLine.length();
+		for (int i = 0; i < compressedLineLength - 1; i++) {
 			System.out.println(Integer.toBinaryString(compressedLine.charAt(i)));
-			binaryCompressedString += String.format("%08d",Integer.parseInt(Integer.toBinaryString(compressedLine.charAt(i))));
+			binaryCompressedString += String.format("%08d",
+					Integer.parseInt(Integer.toBinaryString(compressedLine.charAt(i))));
 		}
-		binaryCompressedString +=Integer.toBinaryString(compressedLine.charAt(compressedLine.length() - 1));
+		binaryCompressedString += Integer.toBinaryString(compressedLine.charAt(compressedLineLength - 1));
 		return binaryCompressedString;
-		
+
 	}
 
 }

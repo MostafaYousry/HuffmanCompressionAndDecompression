@@ -36,7 +36,7 @@ public class HuffmanTree {
 			root.getRight().appendBit("1");
 			printHuffmanTree(root.getRight());
 		}
-		System.out.println(root.getCharacter() + " " + root.getCode());
+//		System.out.println(root.getCharacter() + " " + root.getCode());
 		if(root.getCharacter()!='Ë'){
 		huffmanEncodingMap.put(root.getCharacter(), root.getCode());
 	}}

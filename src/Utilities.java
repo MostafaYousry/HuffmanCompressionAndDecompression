@@ -20,6 +20,8 @@ public class Utilities {
 	PriorityQueue<HuffmanNode> huffmanQueue = new PriorityQueue<HuffmanNode>(5, huffmanComparator);
 	HuffmanDecodedTree huffmanDecodedTree = new HuffmanDecodedTree();
 
+	int fileStringLength;
+
 	public void readEncodedFile(String fileName) {
 		File outputFile = new File(fileName);
 		Scanner scanner;
@@ -32,7 +34,7 @@ public class Utilities {
 				String codeValue = scanner.next();
 				huffmanDecodedTree.build(keyCharacter, codeValue);
 			}
-			scanner.nextLine();
+			// scanner.nextLine();
 			compressedLine = scanner.nextLine();
 
 		} catch (FileNotFoundException e) {
@@ -55,8 +57,12 @@ public class Utilities {
 		Scanner scanner;
 		try {
 			scanner = new Scanner(inputFile);
-			while (scanner.hasNextLine())
+			while (scanner.hasNextLine()) {
 				fileString += (scanner.nextLine());
+				fileString += "{";
+			}
+			fileString = fileString.substring(0, fileString.length() - 1);
+			// System.out.println(fileString);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,7 +74,8 @@ public class Utilities {
 	}
 
 	public void setCharactersAndFrequencies() {
-		for (int i = 0; i < fileString.length(); i++) {
+		fileStringLength = fileString.length();
+		for (int i = 0; i < fileStringLength; i++) {
 			if (!fileCharacters.contains(fileString.charAt(i))) {
 				fileCharacters.add(fileString.charAt(i));
 				fileCharactersFrequency.add(1);
@@ -90,7 +97,8 @@ public class Utilities {
 	}
 
 	public void buildHuffmanQueue() {
-		for (int i = 0; i < fileCharacters.size(); i++) {
+		int fileCharactersSize = fileCharacters.size();
+		for (int i = 0; i < fileCharactersSize; i++) {
 			huffmanQueue.add(new HuffmanNode(fileCharactersFrequency.get(i), fileCharacters.get(i)));
 		}
 	}
@@ -100,62 +108,51 @@ public class Utilities {
 		huffmanEncodingMap = huffmanTreeBuilder.build();
 	}
 
-	public void writeEncodedFile() {
+	public void writeEncodedFile() throws IOException {
 		String encodedOutput = new String();
-		for (int i = 0; i < fileString.length(); i++) {
+		String bitsSubString;
+		char correspondingCharacter;
+
+		// get the input file as sequence of 0s and 1s
+		for (int i = 0; i < fileStringLength; i++)
 			encodedOutput += huffmanEncodingMap.get(fileString.charAt(i));
-		}
-		String test;
-		BufferedWriter outputFile = null;
-		try {
-			outputFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("outputFile.txt")));
-			outputFile.write("");
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+
+		BufferedWriter outputFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("outputFile.txt")));
+		outputFile.write("");
+
+		// write each character and its code in the output file
 		for (int i = 0; i < huffmanEncodingMap.size(); i++) {
-			try {
-				char mapCharacter = fileCharacters.get(i);
-				outputFile.append(mapCharacter + " " + huffmanEncodingMap.get(mapCharacter));
-				outputFile.newLine();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			char mapCharacter = fileCharacters.get(i);
+			outputFile.append(mapCharacter + " " + huffmanEncodingMap.get(mapCharacter));
+			outputFile.newLine();
 		}
 
-		try {
-			outputFile.append('Ë');
-			outputFile.newLine();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		for (int i = 0; i < encodedOutput.length();) {
-			if (i + 8 > encodedOutput.length()) {
-				test = encodedOutput.substring(i, encodedOutput.length());
-				System.out.println(test);
-				i = encodedOutput.length();
+		outputFile.append('Ë');
+		outputFile.newLine();
+
+		// convert each 8 digits to their corresponding asci character and write
+		// it in the output file
+		// if the corresponding asci character is \n, then write ä in the output
+		// file
+		int encodedOutputLength = encodedOutput.length();
+		for (int i = 0; i < encodedOutputLength;) {
+			if (i + 8 > encodedOutputLength) {
+				bitsSubString = encodedOutput.substring(i, encodedOutputLength);
+				// System.out.println(test);
+				break;
 			} else {
-				test = encodedOutput.substring(i, i + 8);
+				bitsSubString = encodedOutput.substring(i, i + 8);
 				i += 8;
 			}
-			char x = (char) Integer.parseInt(test, 2);
-			try {
-				outputFile.append(x);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			correspondingCharacter = (char) Integer.parseInt(bitsSubString, 2);
+			if (correspondingCharacter == '\n')
+				outputFile.append('ä');
+			else
+				outputFile.append(correspondingCharacter);
 
 		}
-		try {
-			outputFile.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		outputFile.close();
+
 	}
 
 	public void writeDecodedFile() {
