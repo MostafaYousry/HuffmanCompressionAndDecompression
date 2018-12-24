@@ -1,8 +1,11 @@
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,6 +23,44 @@ public class Utilities {
 	PriorityQueue<HuffmanNode> huffmanQueue = new PriorityQueue<HuffmanNode>(5, huffmanComparator);
 	HuffmanDecodedTree huffmanDecodedTree = new HuffmanDecodedTree();
 
+	
+	
+	public void readBinaryFile(String filename) throws IOException
+	{
+		
+		
+	       try (
+	               InputStream inputStream = new FileInputStream(filename);
+	        
+	    		   ) {
+	    
+	               long fileSize = new File(filename).length();
+	  
+	               byte[] allBytes = new byte[(int) fileSize];
+	    fileString="";
+	               inputStream.read(allBytes);
+	               String inputBinary=new String(allBytes);
+               System.out.println(inputBinary);
+           	   String test;
+               for (int i = 0; i < inputBinary.length();) {
+    			if (i + 8 > inputBinary.length()) {
+    				test = inputBinary.substring(i,inputBinary.length());
+    				System.out.println(test);
+    				i = inputBinary.length();
+    			} else {
+    				test = inputBinary.substring(i, i + 8);
+    				i += 8;
+    			}
+    			char x = (char) Integer.parseInt(test, 2);
+    			System.out.println(String.valueOf(x));
+    			fileString+=x;
+    			System.out.println(fileString);
+	       }} catch (IOException ex) {
+	               ex.printStackTrace();
+	           }
+
+	}
+	
 	public void readEncodedFile(String fileName) {
 		File outputFile = new File(fileName);
 		Scanner scanner;
@@ -27,7 +68,7 @@ public class Utilities {
 			scanner = new Scanner(outputFile);
 			while (scanner.hasNextLine()) {
 				String keyCharacter = scanner.next();
-				if (keyCharacter.equals("Ë"))
+				if (keyCharacter.equals("Ã‹"))
 					break;
 				String codeValue = scanner.next();
 				huffmanDecodedTree.build(keyCharacter, codeValue);
@@ -126,7 +167,7 @@ public class Utilities {
 		}
 
 		try {
-			outputFile.append('Ë');
+			outputFile.append('Ã‹');
 			outputFile.newLine();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
