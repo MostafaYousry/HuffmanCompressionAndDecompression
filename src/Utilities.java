@@ -11,7 +11,7 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 
 public class Utilities {
-	String compressedLine, fileString;
+	String compressedLine = "", fileString;
 	HashMap<Character, String> huffmanEncodingMap = new HashMap<>();
 	HashMap<String, String> huffmanDecodingMap = new HashMap<>();
 	ArrayList<Character> fileCharacters = new ArrayList<>();
@@ -32,10 +32,12 @@ public class Utilities {
 				if (keyCharacter.equals("Ë"))
 					break;
 				String codeValue = scanner.next();
+				scanner.nextLine();
 				huffmanDecodedTree.build(keyCharacter, codeValue);
 			}
-			// scanner.nextLine();
-			compressedLine = scanner.nextLine();
+			scanner.nextLine();
+			while (scanner.hasNextLine())
+				compressedLine += scanner.nextLine();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -60,7 +62,9 @@ public class Utilities {
 			while (scanner.hasNextLine()) {
 				fileString += (scanner.nextLine());
 				fileString += "{";
+				System.out.println("read file");
 			}
+
 			fileString = fileString.substring(0, fileString.length() - 1);
 			// System.out.println(fileString);
 		} catch (FileNotFoundException e) {
@@ -117,6 +121,7 @@ public class Utilities {
 		for (int i = 0; i < fileStringLength; i++)
 			encodedOutput += huffmanEncodingMap.get(fileString.charAt(i));
 
+		System.out.println("file as 0s & 1s : " + encodedOutput);
 		BufferedWriter outputFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("outputFile.txt")));
 		outputFile.write("");
 
@@ -136,21 +141,20 @@ public class Utilities {
 		// file
 		int encodedOutputLength = encodedOutput.length();
 		for (int i = 0; i < encodedOutputLength;) {
-			if (i + 8 > encodedOutputLength) {
+			if (i + 6 > encodedOutputLength) {
 				bitsSubString = encodedOutput.substring(i, encodedOutputLength);
 				// System.out.println(test);
-				break;
+				i = encodedOutputLength;
 			} else {
-				bitsSubString = encodedOutput.substring(i, i + 8);
-				i += 8;
+				bitsSubString = encodedOutput.substring(i, i + 6);
+				i += 6;
 			}
-			correspondingCharacter = (char) Integer.parseInt(bitsSubString, 2);
-			if (correspondingCharacter == '\n')
-				outputFile.append('ä');
-			else
-				outputFile.append(correspondingCharacter);
+
+			correspondingCharacter = (char) (Integer.parseInt(bitsSubString, 2) + 33);
+			outputFile.append(correspondingCharacter);
 
 		}
+
 		outputFile.close();
 
 	}

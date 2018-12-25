@@ -34,18 +34,28 @@ public class HuffmanDecodedTree {
 
 	public void decodeFile(String compressedLine) {
 		String binaryCompressedString = convertStringToBinary(compressedLine);
+		// String binaryCompressedString = compressedLine;
+		int binaryCompressedStringLength = binaryCompressedString.length();
 		HuffmanNode nodePointer = root;
-		for (int i = 0; i < binaryCompressedString.length(); i++) {
+		for (int i = 0; i < binaryCompressedStringLength; i++) {
 			if (binaryCompressedString.charAt(i) == '0') {
 				nodePointer = nodePointer.getLeft();
 				if (nodePointer.getLeft() == null && nodePointer.getRight() == null) {
-					System.out.println(nodePointer.getCharacter());
+					char nodeCharacter = nodePointer.getCharacter();
+					if (nodeCharacter == '{') {
+						System.out.println();
+					} else
+						System.out.print(nodeCharacter);
 					nodePointer = root;
 				}
 			} else if (binaryCompressedString.charAt(i) == '1') {
 				nodePointer = nodePointer.getRight();
 				if (nodePointer.getLeft() == null && nodePointer.getRight() == null) {
-					System.out.println(nodePointer.getCharacter());
+					char nodeCharacter = nodePointer.getCharacter();
+					if (nodeCharacter == '{') {
+						System.out.println();
+					} else
+						System.out.print(nodeCharacter);
 					nodePointer = root;
 				}
 			}
@@ -54,14 +64,23 @@ public class HuffmanDecodedTree {
 	}
 
 	private String convertStringToBinary(String compressedLine) {
+		System.out.println(compressedLine);
 		String binaryCompressedString = "";
+		char compressedCharacter;
+		int decimalOfcompressedCharacter = 0;
 		int compressedLineLength = compressedLine.length();
 		for (int i = 0; i < compressedLineLength - 1; i++) {
-			System.out.println(Integer.toBinaryString(compressedLine.charAt(i)));
-			binaryCompressedString += String.format("%08d",
-					Integer.parseInt(Integer.toBinaryString(compressedLine.charAt(i))));
+			compressedCharacter = compressedLine.charAt(i);
+			decimalOfcompressedCharacter = (int) compressedCharacter - 33;
+			binaryCompressedString += String.format("%06d",
+					Integer.parseInt(Integer.toBinaryString(decimalOfcompressedCharacter)));
+
 		}
-		binaryCompressedString += Integer.toBinaryString(compressedLine.charAt(compressedLineLength - 1));
+
+		decimalOfcompressedCharacter = (int) compressedLine.charAt(compressedLineLength - 1) - 33;
+		binaryCompressedString += Integer.toBinaryString(decimalOfcompressedCharacter);
+
+		System.out.println(binaryCompressedString);
 		return binaryCompressedString;
 
 	}

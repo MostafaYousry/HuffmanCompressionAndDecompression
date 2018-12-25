@@ -19,6 +19,27 @@ public class Main {
 		Utilities utilities = new Utilities();
 		String inputFile = new String();
 		int option;
+//		ExtendedAscii extendedAscii = new ExtendedAscii();
+////		for(int i  =0 ; i < 256; i++){
+////			extendedAscii.printChar(i);
+////		}
+////		
+//		System.out.println((char) 0x8c);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		System.out.println("****** Huffman Compression & Decompression ******");
 		System.out.println("Want to compress a file or decompress a file ?");
 		System.out.println("1 : Compress        2 : Decompress");
@@ -44,13 +65,13 @@ public class Main {
 			inputFile = scanner.nextLine();
 			utilities.readEncodedFile(inputFile);
 			utilities.writeDecodedFile();
-			System.out.println("File is decompressed succesfully");
+			System.out.println("\nFile is decompressed succesfully");
 		}
 		else{
 			System.out.println("Not an option good bye");
 		}
 		
-		
+//		
 		
 	}
 }
