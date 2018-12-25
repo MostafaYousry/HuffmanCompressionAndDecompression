@@ -1,8 +1,11 @@
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,6 +15,7 @@ import java.util.Scanner;
 
 public class Utilities {
 	String compressedLine = "", fileString;
+	StringBuilder decompressedFile ;
 	HashMap<Character, String> huffmanEncodingMap = new HashMap<>();
 	HashMap<String, String> huffmanDecodingMap = new HashMap<>();
 	ArrayList<Character> fileCharacters = new ArrayList<>();
@@ -19,8 +23,41 @@ public class Utilities {
 	Comparator<HuffmanNode> huffmanComparator = new HuffmanNodeComparator();
 	PriorityQueue<HuffmanNode> huffmanQueue = new PriorityQueue<HuffmanNode>(5, huffmanComparator);
 	HuffmanDecodedTree huffmanDecodedTree = new HuffmanDecodedTree();
-
 	int fileStringLength;
+
+	public void readBinaryFile(String filename) throws IOException {
+
+		try (InputStream inputStream = new FileInputStream(filename);
+
+		) {
+
+			long fileSize = new File(filename).length();
+
+			byte[] allBytes = new byte[(int) fileSize];
+			fileString = "";
+			inputStream.read(allBytes);
+			String inputBinary = new String(allBytes);
+			System.out.println(inputBinary);
+			String test;
+			for (int i = 0; i < inputBinary.length();) {
+				if (i + 8 > inputBinary.length()) {
+					test = inputBinary.substring(i, inputBinary.length());
+					System.out.println(test);
+					i = inputBinary.length();
+				} else {
+					test = inputBinary.substring(i, i + 8);
+					i += 8;
+				}
+				char x = (char) Integer.parseInt(test, 2);
+				System.out.println(String.valueOf(x));
+				fileString += x;
+				System.out.println(fileString);
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+	}
 
 	public void readEncodedFile(String fileName) {
 		File outputFile = new File(fileName);
@@ -29,6 +66,9 @@ public class Utilities {
 			scanner = new Scanner(outputFile);
 			while (scanner.hasNextLine()) {
 				String keyCharacter = scanner.next();
+				if(keyCharacter.equals("^"))
+					keyCharacter = " ";
+
 				if (keyCharacter.equals("Ë"))
 					break;
 				String codeValue = scanner.next();
@@ -62,7 +102,6 @@ public class Utilities {
 			while (scanner.hasNextLine()) {
 				fileString += (scanner.nextLine());
 				fileString += "{";
-				System.out.println("read file");
 			}
 
 			fileString = fileString.substring(0, fileString.length() - 1);
@@ -121,14 +160,16 @@ public class Utilities {
 		for (int i = 0; i < fileStringLength; i++)
 			encodedOutput += huffmanEncodingMap.get(fileString.charAt(i));
 
-		System.out.println("file as 0s & 1s : " + encodedOutput);
-		BufferedWriter outputFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("outputFile.txt")));
+		BufferedWriter outputFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("compressedFile.txt")));
 		outputFile.write("");
 
 		// write each character and its code in the output file
 		for (int i = 0; i < huffmanEncodingMap.size(); i++) {
 			char mapCharacter = fileCharacters.get(i);
-			outputFile.append(mapCharacter + " " + huffmanEncodingMap.get(mapCharacter));
+			if (mapCharacter == ' ')
+				outputFile.append("^" + " " + huffmanEncodingMap.get(mapCharacter));
+			else
+				outputFile.append(mapCharacter + " " + huffmanEncodingMap.get(mapCharacter));
 			outputFile.newLine();
 		}
 
@@ -159,8 +200,16 @@ public class Utilities {
 
 	}
 
-	public void writeDecodedFile() {
-		huffmanDecodedTree.decodeFile(compressedLine);
+	public void writeDecodedFile() throws IOException {
+		decompressedFile = huffmanDecodedTree.decodeFile(compressedLine);
+		writeDecompressedFile(decompressedFile);
+	}
+
+	private void writeDecompressedFile(StringBuilder decompressedFile) throws IOException {
+		BufferedWriter outputFile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("decompressedFile.txt")));
+		outputFile.write("");
+		outputFile.write(decompressedFile.toString());
+		outputFile.close();
 	}
 
 }

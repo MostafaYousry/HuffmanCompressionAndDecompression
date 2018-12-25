@@ -64,7 +64,12 @@ public class Main {
 			System.out.println("File name : ");
 			inputFile = scanner.nextLine();
 			utilities.readEncodedFile(inputFile);
-			utilities.writeDecodedFile();
+			try {
+				utilities.writeDecodedFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println("\nFile is decompressed succesfully");
 		}
 		else{

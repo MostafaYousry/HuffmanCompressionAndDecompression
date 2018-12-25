@@ -32,20 +32,22 @@ public class HuffmanDecodedTree {
 
 	}
 
-	public void decodeFile(String compressedLine) {
+	public StringBuilder decodeFile(String compressedLine) {
 		String binaryCompressedString = convertStringToBinary(compressedLine);
 		// String binaryCompressedString = compressedLine;
 		int binaryCompressedStringLength = binaryCompressedString.length();
+		StringBuilder decompressedFile = new StringBuilder();
 		HuffmanNode nodePointer = root;
 		for (int i = 0; i < binaryCompressedStringLength; i++) {
+			
 			if (binaryCompressedString.charAt(i) == '0') {
 				nodePointer = nodePointer.getLeft();
 				if (nodePointer.getLeft() == null && nodePointer.getRight() == null) {
 					char nodeCharacter = nodePointer.getCharacter();
 					if (nodeCharacter == '{') {
-						System.out.println();
+						decompressedFile.append(System.getProperty("line.separator"));
 					} else
-						System.out.print(nodeCharacter);
+						decompressedFile.append(nodeCharacter);
 					nodePointer = root;
 				}
 			} else if (binaryCompressedString.charAt(i) == '1') {
@@ -53,18 +55,18 @@ public class HuffmanDecodedTree {
 				if (nodePointer.getLeft() == null && nodePointer.getRight() == null) {
 					char nodeCharacter = nodePointer.getCharacter();
 					if (nodeCharacter == '{') {
-						System.out.println();
+						decompressedFile.append(System.getProperty("line.separator"));
 					} else
-						System.out.print(nodeCharacter);
+						decompressedFile.append(nodeCharacter);
 					nodePointer = root;
 				}
 			}
 		}
+		return decompressedFile;
 
 	}
 
 	private String convertStringToBinary(String compressedLine) {
-		System.out.println(compressedLine);
 		String binaryCompressedString = "";
 		char compressedCharacter;
 		int decimalOfcompressedCharacter = 0;
@@ -80,7 +82,6 @@ public class HuffmanDecodedTree {
 		decimalOfcompressedCharacter = (int) compressedLine.charAt(compressedLineLength - 1) - 33;
 		binaryCompressedString += Integer.toBinaryString(decimalOfcompressedCharacter);
 
-		System.out.println(binaryCompressedString);
 		return binaryCompressedString;
 
 	}
